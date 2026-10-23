@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار الفصل الرابع: معالجة النصوص باستخدام Microsoft Word</title>
+<style>
+:root{--navy:#102a43;--blue:#0f766e;--accent:#0ea5e9;--text:#1f2937;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#e0f2fe,#f8fafc 52%,#ccfbf1);color:var(--text);line-height:1.8}
+.container{width:min(920px,94%);margin:32px auto}
+.hero{background:linear-gradient(120deg,var(--navy),var(--blue));color:#fff;padding:30px;border-radius:22px 22px 0 0;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:190px;height:190px;border:28px solid #ffffff18;border-radius:50%;left:-35px;top:-75px}
+.kicker{font-size:.9rem;opacity:.88}
+h1{margin:6px 0;font-size:clamp(1.5rem,4vw,2.2rem)}
+.hero p{margin:5px 0 0;color:#d9fffb}
+.panel{background:white;padding:26px;border-radius:0 0 22px 22px;box-shadow:0 18px 50px #18345b16}
+.student-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+label{display:block;font-weight:bold;margin-bottom:6px}
+input[type=text]{width:100%;padding:13px 14px;border:1px solid #cbd5e1;border-radius:12px;font:inherit;background:#fbfdff}
+input:focus{outline:3px solid #bae6fd;border-color:var(--accent)}
+.progress-wrap{margin:18px 0 24px}
+.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:.92rem}
+.progress{height:9px;background:#e2e8f0;border-radius:20px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--accent));transition:width .25s}
+.question{border:1px solid #e2e8f0;border-radius:16px;padding:20px;margin:18px 0;background:#fff}
+.qhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.qnum{display:grid;place-items:center;min-width:36px;height:36px;background:#ccfbf1;color:#115e59;border-radius:11px;font-weight:bold}
+.qtext{font-size:1.08rem;font-weight:bold}
+.options{display:grid;gap:9px;margin-top:14px}
+.option{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid #dbe3ee;border-radius:11px;cursor:pointer;transition:.15s}
+.option:hover{border-color:#67e8f9;background:#f8feff}
+.option input{margin-top:7px;accent-color:var(--blue)}
+.option.correct{border-color:#86efac;background:#f0fdf4}
+.option.wrong{border-color:#fca5a5;background:#fef2f2}
+.feedback{display:none;margin-top:12px;padding:11px 13px;border-radius:10px;font-size:.95rem}
+.feedback.show{display:block}
+.feedback.good{background:#f0fdf4;color:#166534}
+.feedback.bad{background:#fff7ed;color:#9a3412}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+button{font:inherit;font-weight:bold;border:0;border-radius:12px;padding:12px 20px;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e2e8f0;color:#1e293b}
+button:disabled{opacity:.45;cursor:not-allowed}
+#result{display:none;margin-top:24px;padding:24px;border-radius:16px;background:#ecfeff;border:1px solid #a5f3fc}
+.score{font-size:2rem;font-weight:bold;color:#0f766e}
+.small{font-size:.9rem;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;margin:18px}
+@media(max-width:640px){.container{margin:12px auto}.hero,.panel{padding:20px}.student-grid{grid-template-columns:1fr}.question{padding:15px}}
+@media print{body{background:white}.hero{border-radius:0}.panel{box-shadow:none}.actions,footer{display:none}.question{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="hero">
+<div class="kicker">اختبار إلكتروني تفاعلي • 10 أسئلة اختيار من متعدد</div>
+<h1>الفصل الرابع: معالجة النصوص باستخدام Microsoft Word</h1>
+<p>إنشاء المستندات وتنسيقها ومراجعتها ونشرها</p>
+</header>
+<main class="panel">
+<section class="student-grid" aria-label="بيانات الطالب">
+<div><label for="studentName">اسم الطالب</label><input id="studentName" type="text" placeholder="اكتب اسمك بالكامل" autocomplete="name" required></div>
+<div><label for="studentId">الرقم الأكاديمي</label><input id="studentId" type="text" placeholder="اكتب الرقم الأكاديمي" inputmode="numeric" required></div>
+</section>
+<div class="progress-wrap">
+<div class="progress-label"><span id="answeredText">تمت الإجابة عن 0 من 10</span><span id="progressPercent">0%</span></div>
+<div class="progress"><span id="progressBar"></span></div>
+</div>
+<form id="quizForm"><div id="questions"></div>
+<div class="actions">
+<button type="button" class="primary" id="submitBtn">تصحيح الاختبار وعرض النتيجة</button>
+<button type="button" class="secondary" id="resetBtn">إعادة الاختبار</button>
+</div></form>
+<section id="result" aria-live="polite"></section>
+<p class="small">تُحسب النتيجة داخل المتصفح. لا تُرسل بيانات الطالب أو درجته تلقائيًا إلى GitHub أو إلى جهة أخرى.</p>
+</main>
+<footer>اختبار تدريبي مبني على محتوى الفصل الرابع.</footer>
+</div>
+<script>
+const questions = [
+{q:"ما الخطوة الأنسب قبل البدء في كتابة مستند تعليمي احترافي؟",opts:["إضافة الصور والمؤثرات أولًا","تحديد الغرض والجمهور ونوع المخرج وبنية العناوين","تصدير المستند إلى PDF قبل الكتابة","كتابة كل المحتوى في فقرة واحدة"],a:1,why:"يبدأ التخطيط بتحديد الغرض والجمهور ونوع المخرج، ثم تحديد بنية الصفحات والعناوين والجداول والصور والمراجع."},
+{q:"لماذا يُفضّل تطبيق Heading 1 وHeading 2 على العناوين بدل الاكتفاء بتكبير الخط وجعله غامقًا؟",opts:["لأن أنماط العناوين تدعم توحيد التنسيق وبناء جدول محتويات آلي","لأنها تمنع تعديل العناوين لاحقًا","لأنها تحول المستند تلقائيًا إلى PDF","لأنها تستبدل التدقيق الإملائي"],a:0,why:"يعتمد جدول المحتويات الآلي على مستويات العناوين المطبقة؛ فالتنسيق اليدوي وحده لا يكفي لإدراج العنوان في الفهرس."},
+{q:"إذا لم يظهر عنوان قسم في جدول المحتويات الآلي، فما أول شيء ينبغي فحصه؟",opts:["لون الصفحة","حجم الصور","ما إذا كان العنوان قد أُسنِد إليه نمط عنوان مناسب","اسم الطابعة الافتراضية"],a:2,why:"الفهرس الآلي يعتمد على أنماط العناوين؛ لذلك ينبغي التحقق من تطبيق نمط مناسب على العنوان."},
+{q:"بعد إضافة قسم جديد وتغيير ترقيم الصفحات، ما الإجراء المناسب للفهرس الآلي؟",opts:["حذف جميع العناوين","إعادة كتابة الفهرس يدويًا دائمًا","تغيير لون العناوين فقط","استخدام Update Table أو Update Field وتحديث المحتوى أو أرقام الصفحات"],a:3,why:"يُحدّث جدول المحتويات بعد تعديل الأقسام أو الصفحات، ويمكن اختيار تحديث أرقام الصفحات فقط أو الجدول بأكمله."},
+{q:"ما الممارسة الأفضل عند إدراج جدول في مستند تعليمي؟",opts:["ترك صف الرأس دون تسميات","استخدام صف رأس واضح وتسميات مفهومة للأعمدة","دمج جميع الخلايا لتسهيل التنسيق","إضافة صفوف فارغة كثيرة للزينة"],a:1,why:"ينبغي أن يكون رأس الجدول واضحًا، وأن تحمل الأعمدة تسميات مفهومة، مع تجنب الخلايا أو الصفوف غير الضرورية."},
+{q:"أدرجت صورة تحمل معنى لا يوضحه النص المحيط بها. ما الإجراء الأنسب لدعم الإتاحة؟",opts:["تصغير الصورة حتى لا تُلاحظ","حذف مصدر الصورة","إضافة وصف بديل مختصر يوضح معناها الأساسي","ترك الصورة بلا وصف في جميع الحالات"],a:2,why:"إذا كانت الصورة تنقل معنى لا يظهر في النص، فينبغي إضافة وصف بديل مختصر، مع التأكد من ملاءمة الصورة وحقوق استخدامها."},
+{q:"ما الاستخدام الصحيح للإشارة المرجعية Bookmark مع الارتباط التشعبي Hyperlink؟",opts:["تحديد موضع داخل المستند ثم إنشاء رابط ينقل القارئ إلى ذلك الموضع","حذف العناوين غير المستخدمة","منع فتح المستند بعد حفظه","تحويل كل الروابط إلى صور"],a:0,why:"تحدد الإشارة المرجعية موضعًا داخل المستند، ويمكن ربط نص بها لينتقل القارئ إلى ذلك الموضع."},
+{q:"ما الفرق الأساسي بين Comments وTrack Changes في المراجعة الجماعية؟",opts:["كلاهما يصدّر المستند إلى PDF فقط","Comments تحسب عدد الصفحات وTrack Changes يضيف صورًا","Comments تحذف المستندات القديمة وTrack Changes ينشئ الفهرس","Comments تضيف ملاحظات، وTrack Changes يسجل التعديلات لمراجعتها وقبولها أو رفضها"],a:3,why:"تُستخدم التعليقات لإضافة ملاحظات مرتبطة بموضع معين، بينما يسجل تعقب التغييرات التعديلات النصية والتنسيقية لتُراجع لاحقًا."},
+{q:"قبل تسليم النسخة النهائية بعد مراجعة المستند، ما الإجراء الأهم؟",opts:["إخفاء علامات المراجعة فقط واعتبار ذلك حذفًا لها","قبول التغييرات أو رفضها بعد فحصها، ومراجعة التعليقات الداخلية","ترك جميع التغييرات غير محسومة","حذف النسخة القابلة للتحرير"],a:1,why:"إخفاء علامات المراجعة لا يزيل التغييرات من الملف؛ يجب فحصها وقبولها أو رفضها والتأكد من عدم ظهور ملاحظات داخلية في النسخة النهائية."},
+{q:"بعد تصدير مستند Word إلى PDF، ما فحص الجودة الأكثر اكتمالًا؟",opts:["التحقق من اسم الملف فقط","التأكد من أن حجم الملف صغير فقط","فحص الصفحات والجداول والروابط والصور واتجاه النص وترقيم الصفحات","افتراض أن التصدير يحافظ على كل شيء دون مراجعة"],a:2,why:"قد تتغير بعض تفاصيل الإخراج؛ لذا ينبغي معاينة النسخة المصدرة وفحص ترتيب الصفحات والجداول والروابط والصور واتجاه النص والترقيم."}
+];
+const questionsEl=document.getElementById('questions'),quizForm=document.getElementById('quizForm'),resultEl=document.getElementById('result');
+let submitted=false;
+function renderQuestions(){
+ questionsEl.innerHTML=questions.map((item,i)=>`<section class="question" id="question-${i}">
+ <div class="qhead"><span class="qnum">${i+1}</span><div class="qtext">${item.q}</div></div>
+ <div class="options">${item.opts.map((opt,j)=>`<label class="option" id="opt-${i}-${j}"><input type="radio" name="q${i}" value="${j}"><span>${opt}</span></label>`).join('')}</div>
+ <div class="feedback" id="feedback-${i}" aria-live="polite"></div></section>`).join('');
+ questionsEl.querySelectorAll('input[type=radio]').forEach(input=>input.addEventListener('change',updateProgress));
+}
+function updateProgress(){
+ const answered=questions.filter((_,i)=>quizForm.querySelector(`input[name="q${i}"]:checked`)).length;
+ document.getElementById('answeredText').textContent=`تمت الإجابة عن ${answered} من ${questions.length}`;
+ const pct=Math.round(answered/questions.length*100);document.getElementById('progressPercent').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%';
+}
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function submitQuiz(){
+ if(submitted)return;
+ const name=document.getElementById('studentName').value.trim(),sid=document.getElementById('studentId').value.trim();
+ if(!name||!sid){alert('من فضلك اكتب اسم الطالب والرقم الأكاديمي أولًا.');(!name?document.getElementById('studentName'):document.getElementById('studentId')).focus();return;}
+ const unanswered=questions.findIndex((_,i)=>!quizForm.querySelector(`input[name="q${i}"]:checked`));
+ if(unanswered!==-1){alert(`يرجى الإجابة عن جميع الأسئلة. السؤال ${unanswered+1} لم تتم الإجابة عنه.`);document.getElementById(`question-${unanswered}`).scrollIntoView({behavior:'smooth',block:'center'});return;}
+ let score=0;
+ questions.forEach((item,i)=>{
+  const selected=Number(quizForm.querySelector(`input[name="q${i}"]:checked`).value),fb=document.getElementById(`feedback-${i}`);
+  item.opts.forEach((_,j)=>{const label=document.getElementById(`opt-${i}-${j}`);label.querySelector('input').disabled=true;if(j===item.a)label.classList.add('correct');if(j===selected&&selected!==item.a)label.classList.add('wrong');});
+  if(selected===item.a){score++;fb.className='feedback show good';fb.innerHTML=`<strong>إجابة صحيحة ✓</strong> — ${item.why}`;}
+  else{fb.className='feedback show bad';fb.innerHTML=`<strong>إجابة غير صحيحة.</strong> الإجابة الصحيحة: ${item.opts[item.a]}. ${item.why}`;}
+ });
+ submitted=true;document.getElementById('submitBtn').disabled=true;
+ const percent=Math.round(score/questions.length*100),message=percent>=80?'ممتاز! لديك فهم جيد لمهارات إنشاء مستندات Word ومراجعتها ونشرها.':percent>=60?'أداء جيد؛ راجع الأسئلة التي أخطأت فيها لتعزيز فهمك.':'راجع خطوات تنسيق المستند والفهرس والمراجعة والتصدير ثم أعد المحاولة.';
+ resultEl.style.display='block';
+ resultEl.innerHTML=`<div class="small">نتيجة الطالب</div><h2>${escapeHTML(name)}</h2><div>الرقم الأكاديمي: <strong>${escapeHTML(sid)}</strong></div><div class="score">${score} / ${questions.length}</div><div>النسبة المئوية: <strong>${percent}%</strong></div><p>${message}</p><p>راجع التغذية الراجعة أسفل كل سؤال لمعرفة سبب صحة الإجابة أو خطئها.</p><button type="button" class="secondary" onclick="window.print()">طباعة النتيجة</button>`;
+ resultEl.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQuiz(){submitted=false;quizForm.reset();renderQuestions();updateProgress();resultEl.style.display='none';resultEl.innerHTML='';document.getElementById('submitBtn').disabled=false;window.scrollTo({top:0,behavior:'smooth'});}
+document.getElementById('submitBtn').addEventListener('click',submitQuiz);document.getElementById('resetBtn').addEventListener('click',resetQuiz);
+renderQuestions();updateProgress();
+</script>
+</body>
+</html>
